@@ -1,0 +1,49 @@
+```{r}
+source("setup.R")
+```
+
+```{r}
+data("knz_bison")
+```
+
+1.  Create a new column in the bison dataset that calculates the individual's age at the time of observation.
+```{r}
+knz_bison <- knz_bison %>%
+  mutate(obsage = rec_year - animal_yob)
+```
+
+2. Write a function that will first filter the bison dataset based on any user-specified weight threshold (returning the filtered dataset).
+```{r}
+bison_weight_filter <- function(weight) {
+  knz_bison %>%
+    filter(animal_weight > weight)
+}
+
+weight_threshold = 500
+
+bison_weight_filter(weight_threshold)
+```
+
+```{r}
+light_bison <- bison_weight_filter(300)  # Bison weighing more than 300 units
+heavy_bison <- bison_weight_filter(700)  # Bison weighing more than 700 units
+```
+
+3.  Create a boxplot showing weight distribution between male and female bison, and then conduct a t-test to see if weight is significantly difference between males and females.
+```{r}
+# Create boxplot
+knz_bison %>% 
+  ggplot() +
+  geom_boxplot(aes(x = animal_sex, y = animal_weight)) +
+  labs(x = "Sex", y = "Weight", title = "Weight Distribution by Sex in Bison")
+
+# The boxplot shows that it seems to be unequal variance in weights between male and female, so we use Levene test to prove
+knz_bison %>% 
+  levene_test(animal_weight ~ animal_sex)
+
+# Perform Welch's t-test (assuming unequal variances)
+knz_bison %>% 
+  t_test(animal_weight ~ animal_sex, var.equal = FALSE, detailed = TRUE)
+
+```
+
