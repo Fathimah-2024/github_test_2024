@@ -47,5 +47,4 @@ knz_bison %>%
 # Perform Welch's t-test (assuming unequal variances)
 knz_bison %>% 
   t_test(animal_weight ~ animal_sex, var.equal = FALSE, detailed = TRUE)
-
 ```
